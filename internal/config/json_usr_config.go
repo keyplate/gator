@@ -41,13 +41,9 @@ func getConfigFilePath() (string, error) {
     return fmt.Sprintf("%s/%s", homePath, configFile), nil
 }
 
-func SetUser(userName string) error {
-    config, err := Read()
-    if err != nil {
-        return err
-    }
-    config.CurrentUserName = userName
-    err = write(config)
+func (c *Config) SetUser(userName string) error {
+    c.CurrentUserName = userName
+    err := write(*c)
     if err != nil {
         return err
     }
