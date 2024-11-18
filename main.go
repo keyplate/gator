@@ -28,6 +28,7 @@ func main() {
     appCommands := commands { commandsToHandlers: map[string]func(*state, command) error{
 	    "login" : handlerLogin,
 	    "register" : handlerRegister,
+	    "reset" : handlerReset,
     } }
     if len(os.Args) < 2 {
          fmt.Printf("Not enough argument!\n")
