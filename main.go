@@ -2,12 +2,16 @@ package main
 
 import (
     "github.com/keyplate/gator/internal/config"
+    "github.com/keyplate/gator/internal/database"
     "fmt"
     "os"
+    "database/sql"
 )
+import _ "github.com/lib/pq"
 
 type state struct {
     cfg *config.Config
+    db *database.Queries
 }
 
 func main() {
@@ -15,9 +19,16 @@ func main() {
     if err != nil {
         fmt.Printf("v%", err)
     }
+    
+    db, err := sql.Open("postgres", usrConfig.DbURL)
+    dbQueries := database.New(db)
+    
 
-    appState := state { cfg: &usrConfig }
-    appCommands := commands { commandsToHandlers: map[string]func(*state, command) error{"login" : handlerLogin} }
+    appState := state { cfg: &usrConfig, db: dbQueries }
+    appCommands := commands { commandsToHandlers: map[string]func(*state, command) error{
+	    "login" : handlerLogin,
+	    "register" : handlerRegister,
+    } }
     if len(os.Args) < 2 {
          fmt.Printf("Not enough argument!\n")
 	 os.Exit(1)
@@ -25,7 +36,7 @@ func main() {
     usrCommand := command { name: os.Args[1], args: os.Args[2:] }
     err = appCommands.run(&appState, usrCommand)
     if err != nil {
-        fmt.Printf("%v\n", err)
+	    fmt.Printf("%v\n", err)
 	os.Exit(1)
     }
 }
