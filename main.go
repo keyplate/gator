@@ -31,6 +31,7 @@ func main() {
 	    "reset" : handlerReset,
 	    "users" : handlerUsers,
         "agg" : handlerAgg,
+        "addfeed" : handlerAddFeed,
     } }
     if len(os.Args) < 2 {
          fmt.Printf("Not enough argument!\n")
