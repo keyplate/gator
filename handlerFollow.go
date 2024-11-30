@@ -38,4 +38,4 @@ func handlerFollow(s *state, cmd command) error {
     fmt.Printf("Subscribed to the feed: %v\n", feedFollow)
 
     return nil
-}  
+} 
