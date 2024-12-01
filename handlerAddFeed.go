@@ -8,24 +8,20 @@ import (
     "time"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, usr database.User) error {
     if len(cmd.args) < 2 {
         return fmt.Errorf("Not enough arguments, expecting 2 {feedName} {feedURL}")
     }
 
     feedName := cmd.args[0]
     feedURL := cmd.args[1]
-    currentUsr, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
-    if err != nil {
-        return err
-    } 
 
     createFeedParams := database.CreateFeedParams{ID: uuid.New(), 
                                                   CreatedAt: time.Now(),
                                                   UpdatedAt: time.Now(),
                                                   Name: feedName,
                                                   Url: feedURL,
-                                                  UserID: currentUsr.ID}
+                                                  UserID: usr.ID}
     feed, err := s.db.CreateFeed(context.Background(), createFeedParams)
     if err != nil {
         return err
@@ -34,7 +30,7 @@ func handlerAddFeed(s *state, cmd command) error {
     createFeedFollowParams := database.CreateFeedFollowParams{ID: uuid.New(),
                                                               CreatedAt: time.Now(),
                                                               UpdatedAt: time.Now(),
-                                                              UserID: currentUsr.ID,
+                                                              UserID: usr.ID,
                                                               FeedID: feed.ID}
     
     _, err = s.db.CreateFeedFollow(context.Background(), createFeedFollowParams)

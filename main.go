@@ -31,10 +31,10 @@ func main() {
 	    "reset" : handlerReset,
 	    "users" : handlerUsers,
         "agg" : handlerAgg,
-        "addfeed" : handlerAddFeed,
+        "addfeed" : middlewareLoggedIn(handlerAddFeed),
         "feeds" : handlerFeeds,
-        "follow" : handlerFollow,
-        "following" : handlerFollowing,
+        "follow" : middlewareLoggedIn(handlerFollow),
+        "following" : middlewareLoggedIn(handlerFollowing),
     } }
     if len(os.Args) < 2 {
          fmt.Printf("Not enough argument!\n")
