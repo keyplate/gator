@@ -6,7 +6,6 @@ import (
 	"html"
 	"io"
 	"net/http"
-	"time"
 )
 
 type RSSFeed struct {
@@ -22,7 +21,7 @@ type RSSItem struct {
     Title       string `xml:"title"`
     Link        string `xml:"link"`
     Description string `xml:"description"`
-    PubDate     time.Time `xml:"pubDate"`
+    PubDate     string `xml:"pubDate"`
 }
 
 func fetchFeed(ctx context.Context, feedUrl string) (*RSSFeed, error) {

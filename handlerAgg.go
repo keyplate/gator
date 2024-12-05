@@ -26,6 +26,7 @@ func handlerAgg(s *state, cmd command) error {
         scrapeFeeds(s.db)
         fmt.Printf("\n-- Feed Scrapped --\n")
     }
+
     return nil
 }
 
@@ -47,12 +48,11 @@ func scrapeFeeds(db *database.Queries) error {
     if err != nil {
         return err
     }
-    
-    
 
     for _, item := range(feed.Channel.Item) {
-       err = savePost(item, db, feedToFetch.ID)
-       if err != nil {
+        fmt.Println(item.Title)
+        err = savePost(item, db, feedToFetch.ID)
+        if err != nil {
             return err
        }
     }
@@ -67,7 +67,7 @@ func savePost(postItem RSSItem, db *database.Queries, feedID uuid.UUID) error {
                                           Title: postItem.Title, 
                                           Url: postItem.Link,
                                           Description: sql.NullString{ String: postItem.Description, Valid: true },
-                                          PublishedAt: sql.NullTime{ Time: postItem.PubDate, Valid: true },
+                                          PublishedAt: sql.NullString{ String: postItem.PubDate, Valid: true },
                                           FeedID: feedID}
     
     _, err := db.CreatePost(context.Background(), createPostParams)

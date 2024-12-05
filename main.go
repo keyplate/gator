@@ -36,6 +36,7 @@ func main() {
         "follow" : middlewareLoggedIn(handlerFollow),
         "following" : middlewareLoggedIn(handlerFollowing),
         "unfollow" : middlewareLoggedIn(handlerUnfollow),
+        "browse" : middlewareLoggedIn(handlerBrowse),
     } }
     if len(os.Args) < 2 {
          fmt.Printf("Not enough argument!\n")
