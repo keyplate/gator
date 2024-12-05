@@ -1,11 +1,13 @@
 package main
 
 import (
-    "context"
-    "fmt"
-    "github.com/keyplate/gator/internal/database"
-    "database/sql"
-    "time"
+	"context"
+	"database/sql"
+	"fmt"
+	"time"
+	"github.com/google/uuid"
+	"github.com/keyplate/gator/internal/database"
+	"github.com/lib/pq"
 )
 
 func handlerAgg(s *state, cmd command) error { 
@@ -45,10 +47,43 @@ func scrapeFeeds(db *database.Queries) error {
     if err != nil {
         return err
     }
-
-    for i, item := range(feed.Channel.Item) {
-        fmt.Printf("#%d Title: %s\n", i, item.Title)
-    }
     
+    
+
+    for _, item := range(feed.Channel.Item) {
+       err = savePost(item, db, feedToFetch.ID)
+       if err != nil {
+            return err
+       }
+    }
+
     return nil
+}
+
+func savePost(postItem RSSItem, db *database.Queries, feedID uuid.UUID) error {
+    createPostParams := database.CreatePostParams{ID: uuid.New(),
+                                          CreatedAt: time.Now(),
+                                          UpdatedAt: time.Now(),
+                                          Title: postItem.Title, 
+                                          Url: postItem.Link,
+                                          Description: sql.NullString{ String: postItem.Description, Valid: true },
+                                          PublishedAt: sql.NullTime{ Time: postItem.PubDate, Valid: true },
+                                          FeedID: feedID}
+    
+    _, err := db.CreatePost(context.Background(), createPostParams)
+    if err != nil {
+       if !isUniqueViolationErr(err) {
+           return err
+       }
+   }
+    return nil
+}
+
+func isUniqueViolationErr(err error) bool {
+    if pgErr, ok := err.(*pq.Error); ok {
+        if pgErr.Code.Name() == "unique_violation" {
+            return true
+        }            
+    }
+    return false
 }

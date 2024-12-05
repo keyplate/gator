@@ -1,11 +1,12 @@
 package main
 
-import ( 
-    "context"
-    "encoding/xml"
-    "html"
-    "io"
-    "net/http"
+import (
+	"context"
+	"encoding/xml"
+	"html"
+	"io"
+	"net/http"
+	"time"
 )
 
 type RSSFeed struct {
@@ -21,7 +22,7 @@ type RSSItem struct {
     Title       string `xml:"title"`
     Link        string `xml:"link"`
     Description string `xml:"description"`
-    PubDate     string `xml:"pubDate"`
+    PubDate     time.Time `xml:"pubDate"`
 }
 
 func fetchFeed(ctx context.Context, feedUrl string) (*RSSFeed, error) {
